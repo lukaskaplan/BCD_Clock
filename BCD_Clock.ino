@@ -60,67 +60,6 @@ void loop() {
       ndx++;
     }
   }   
-   // if ((rc != enter) and (rc != help)) {
-      
-      
-/* obsluha backspace */
-/*
-      if(rc == bckspc) {    
-        
-      }
-      else {
-        ndx++;
-      }
-  */    
-/* ochrana proti preteceni  */
-    /*  if (ndx >= numChars) {
-        ndx = numChars - 1;
-      }
-    }*/
-/* detekce otazniku */
-/*    else if (rc == help){
-      receivedChars[ndx] = rc;
-      receivedChars[++ndx] = '\0'; // terminate the string
-      ndx = 0;
-    }
-    else {
-      receivedChars[ndx] = '\0'; // terminate the string
-      ndx = 0;
-    }
- }*/
- /*
-  if (newData == true) {
-      if(receivedChars[strlen(receivedChars)-1] == '?'){
-        Serial.println("\n\r----------HELP------------ ");
-        receivedChars[strlen(receivedChars)-1] = '\0'; //smazani otazniku
-        for(int i=0; i < strlen(receivedChars); i++){
-          receivedChars2[i] = receivedChars[i];
-         
-        }
-        //Serial.print(prompt);
-        //Serial.print(receivedChars);
-        newData = false;
-        help = true;
-      }
-      else if(strlen(receivedChars) > 0){
-        Serial.print(F("\n\rThis just in ... "));
-        Serial.println(receivedChars);
-        Serial.print(prompt);
-        newData = false;
-     }
-     else {
-        Serial.println();
-        Serial.print(prompt);
-        newData = false;
-     }
-      
-  }
-  else if(help == true and strlen(receivedChars2) > 0){
-        Serial.print(prompt);
-        Serial.print(receivedChars2);
-        newData = false;
-        help = false; 
-  }
- */
+
 } // ------------- end of loop --------------------------
 
