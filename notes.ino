@@ -18,8 +18,8 @@
   12 - 15     all     static default gateway
   16 - 19     all     static DNS
   20 - 23     all     NTP server IP address
-  24 - 55     all     32byte SSID
-  56 - 118    all     63byte Wpa/Wpa2 PSK
+  24 - 56     all     32byte SSID (+1 byte terminating 0)
+  57 - 121    all     63byte Wpa/Wpa2 PSK (+1 byte terminating 0)
   119 - 255   all     ---RESERVED---
 
 

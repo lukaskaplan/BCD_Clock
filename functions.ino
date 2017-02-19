@@ -1,5 +1,5 @@
 /*------------------------------------------*
- *---------------- I2C Funkce --------------*
+ *-------------- I2C Functions -------------*
  *------------------------------------------*/
 void i2c_eeprom_write_byte( int deviceaddress, unsigned int eeaddress, byte data ) {
   /*
@@ -11,27 +11,50 @@ void i2c_eeprom_write_byte( int deviceaddress, unsigned int eeaddress, byte data
   */
     int rdata = data;
     Wire.beginTransmission(deviceaddress);
-    //Wire.write((int)(eeaddress & 0x00FF)); // odešle vyšší byte
-    Wire.write((int)(eeaddress)); // odešle vyšší byte
-    Wire.write((int)(eeaddress & 0xFF)); // odešle nižší byte
+    Wire.write((int)(eeaddress & 0x00FF)); // MSB
+    //Wire.write((int)(eeaddress)); // MSB
+    Wire.write((int)(eeaddress & 0xFF)); // LSB
     Wire.write(rdata);
     Wire.endTransmission();
-    delay(5);
 }
- 
+
+void i2c_eeprom_write_bulk(int i2caddr, unsigned int firstaddr, unsigned int bytes, String data){
+ /*
+  * Writes given bytes into i2c eeprom at once
+  * 
+  * i2caddr - address of i2c device (0-127)
+  * firsaddr - address (dec) of first byte to write
+  * bytes - bytes count 
+  * data  -String to be written in memory
+  *       -if it is longer than assigned memory range, it will be trimmed
+  *       -if it is shorter than assigned memory range, free bytes will be filled by zeroes (\0)
+  */
+    char chars[bytes];
+    data.toCharArray(chars, bytes);     //convert string to char array (last byte/char will be always 0)
+    unsigned int lastaddr = firstaddr + bytes - 1;      
+    unsigned int chi;      //chars index 
+    
+    for(int eeaddr = firstaddr; eeaddr <= lastaddr; eeaddr++) {
+        chi = eeaddr - firstaddr;
+        if( chi < strlen(chars) ) i2c_eeprom_write_byte( i2caddr, eeaddr, (byte)chars[chi] );
+        else i2c_eeprom_write_byte( i2caddr, eeaddr, (byte)'\0' );
+        delay(5);     // without this, there is problem with "bulk" write to memory (missing values etc.)
+    }
+}
+
 byte i2c_eeprom_read_byte( int deviceaddress, unsigned int eeaddress ) {
   /*
-  * Slouzi pro precteni jednoho byte do i2c eeprom
+  * Reads one byte from i2c eeprom
   *
-  * deviceaddress = i2c adresa eeprom
-  * eeaddress = adresa konkretniho byte v pameti
-  * return rdata = vraci byte (hodnota z pameti)
+  * deviceaddress = i2c addres of memory
+  * eeaddress = address of byte in memory
+  * return rdata = return value of byte read from memory
   */
     byte rdata = 0xFF;
     Wire.beginTransmission(deviceaddress);
-    //Wire.write((int)(eeaddress & 0x00FF)); // odešle vyšší byte
-    Wire.write((int)(eeaddress)); // odešle vyšší byte
-    Wire.write((int)(eeaddress & 0xFF)); // odešle nižší byte
+    Wire.write((int)(eeaddress & 0x00FF)); // MSB
+    //Wire.write((int)(eeaddress)); // MSB
+    Wire.write((int)(eeaddress & 0xFF)); // LSB
     Wire.endTransmission();
     Wire.requestFrom(deviceaddress,1);
     if (Wire.available()) rdata = Wire.read();
@@ -39,7 +62,7 @@ byte i2c_eeprom_read_byte( int deviceaddress, unsigned int eeaddress ) {
 }
   
 /*------------------------------------------*
- *---------------- CLI Funkce --------------*
+ *--------------- CLI Fuctions -------------*
  *------------------------------------------*/
 void showHelp() {
   //print cli help (possible commands with explanation)
