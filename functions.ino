@@ -67,11 +67,14 @@ byte i2c_eeprom_read_byte( int deviceaddress, unsigned int eeaddress ) {
 void showHelp() {
   //print cli help (possible commands with explanation)
   Serial.println();
-  //Serial.println("show config");
+  Serial.println("set wifi ssid <ssid>");
+  Serial.println("set wifi password <password>");
+  Serial.println("show config");
   Serial.println("show mac\t\tShow wireless MAC address");
   //Serial.println("show log");
   Serial.println("show time");
   Serial.println("show wlans\t\tScan and show wireless networks");
+  
 }
 
 void showMac() {
@@ -207,6 +210,28 @@ void showTime(){
     }
 }
 
+void showConfig(){
+  Serial.print("SSID: ");
+  for(unsigned int x = 24; x < 57; x++){Serial.print((char)i2c_eeprom_read_byte( MEM_I2C_ADDR, x ));}
+  Serial.println();
+  
+  Serial.print("Password: ");
+  for(unsigned int x = 57; x < 121; x++){Serial.print((char)i2c_eeprom_read_byte( MEM_I2C_ADDR, x ));}
+  Serial.println();
+
+  showMac();
+}
+
+byte StringToIP(String ip){
+  Serial.print("StringToIP: ");
+  Serial.println(ip);
+  //max length of string is 16 chars (4x dot, 4x 1-3 cipher number)
+  //if( string.length <= 16 ) {
+    Serial.println(ip.length());
+  //string have to contain four dots
+  //substrings are 1-3 ciphers
+}
+
 byte decToBcd(byte val){
     return( (val/10*16) + (val%10) );
 }
@@ -215,3 +240,5 @@ byte decToBcd(byte val){
 byte bcdToDec(byte val){
     return( (val/16*10) + (val%16) );
 }
+
+
