@@ -1,6 +1,7 @@
 /* 
  *  EEPROM Memory alocation plan
- *  Addresses: 0x0 to 0xfff
+ *  Addresses: 0x0 to 0xfff 
+ *  AT24c32 32Kbit 4096x8
 
 (dec)addr    bit(s)  Purpose
 ----------------------------------------------------

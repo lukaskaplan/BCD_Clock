@@ -11,7 +11,7 @@ void i2c_eeprom_write_byte( int deviceaddress, unsigned int eeaddress, byte data
   */
     int rdata = data;
     Wire.beginTransmission(deviceaddress);
-    Wire.write((int)(eeaddress & 0x00FF)); // MSB
+    Wire.write((int)(eeaddress >> 8)); // MSB
     //Wire.write((int)(eeaddress)); // MSB
     Wire.write((int)(eeaddress & 0xFF)); // LSB
     Wire.write(rdata);
@@ -52,7 +52,7 @@ byte i2c_eeprom_read_byte( int deviceaddress, unsigned int eeaddress ) {
   */
     byte rdata = 0xFF;
     Wire.beginTransmission(deviceaddress);
-    Wire.write((int)(eeaddress & 0x00FF)); // MSB
+    Wire.write((int)(eeaddress >> 8)); // MSB
     //Wire.write((int)(eeaddress)); // MSB
     Wire.write((int)(eeaddress & 0xFF)); // LSB
     Wire.endTransmission();
@@ -74,6 +74,9 @@ void showHelp() {
   //Serial.println("show log");
   Serial.println("show time");
   Serial.println("show wlans\t\tScan and show wireless networks");
+  Serial.println("show memory hexdump");
+  Serial.println("show rtc hexdump");
+  
   
 }
 
@@ -220,6 +223,57 @@ void showConfig(){
   Serial.println();
 
   showMac();
+}
+
+void showMEMHexdump(){
+  char text[15];
+  Serial.println();
+  
+  for(int adr = 0; adr < 4096; adr=adr+16){
+    Serial.print("0x");
+    Serial.print(adr, HEX);
+    Serial.print("\t");
+
+    for(int y = 0; y < 16; y++){
+      int B = i2c_eeprom_read_byte(  MEM_I2C_ADDR, adr+y );
+      //int i = (adr + 16) % 16;
+      text[y] = B;
+      if(B < 16) Serial.print("0");
+      Serial.print(B, HEX);
+      Serial.print(" ");
+    }
+    Serial.print("\t");
+    for(int i = 0; i < 16; i++){
+      Serial.print(text[i]);
+    }
+    Serial.println();
+    delay(5);      
+  }
+}
+
+void showRTCHexdump(){
+   
+   char text[15];
+  Serial.println();
+  
+  for(int adr = 0; adr < 19; adr=adr+16){
+    Serial.print("0x");
+    Serial.print(adr, HEX);
+    Serial.print("\t");
+
+    for(int y = 0; y < 16; y++){
+      if((adr+y) == 19) continue;
+      int B = i2c_eeprom_read_byte( RTC_I2C_ADDR, adr+y );
+      //int i = (adr + 16) % 16;
+      text[y] = B;
+      if(B < 16) Serial.print("0");
+      Serial.print(B, HEX);
+      Serial.print(" "); 
+    }
+    Serial.println();
+    delay(5);      
+  }
+      
 }
 
 byte StringToIP(String ip){

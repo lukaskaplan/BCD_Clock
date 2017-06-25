@@ -2,6 +2,7 @@
 #include <Wire.h>         //for I2C communicaton
 #include "ESP8266WiFi.h"  //for Wifi communication
 
+/*---------- Weemos PIN mapping ----------*/
 #ifndef Pins_Arduino_h
 #define Pins_Arduino_h
 
@@ -56,7 +57,7 @@ void setup() {
 
 void loop() {        
     if(Serial.available() > 0) {
-        delay(100); //because of backspace, if there is no delay, whole row is deleted by one push of backspace key...
+       // delay(100); //because of backspace, if there is no delay, whole row is deleted by one push of backspace key...
         rc = Serial.read();
         
         if ( rc == enter ) {
@@ -70,6 +71,8 @@ void loop() {
                 else if( command == "show mac" ) showMac();
                 else if( command == "show time" ) showTime();
                 else if( command == "show wlans" ) showWlans();
+                else if( command == "show memory hexdump" ) showMEMHexdump();
+                else if( command == "show rtc hexdump" ) showRTCHexdump();
                 else if( command.substring(0,14) == "set wifi ssid " ) {      
                     String ssid = command.substring(14);  //ssid = char 14 to end
                     i2c_eeprom_write_bulk( MEM_I2C_ADDR, 24, 33, ssid);
