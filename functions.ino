@@ -237,15 +237,21 @@ void showMEMHexdump(){
     for(int y = 0; y < 16; y++){
       int B = i2c_eeprom_read_byte(  MEM_I2C_ADDR, adr+y );
       //int i = (adr + 16) % 16;
+      if(y == 8) Serial.print(" ");
       text[y] = B;
       if(B < 16) Serial.print("0");
       Serial.print(B, HEX);
       Serial.print(" ");
     }
     Serial.print("\t");
+    Serial.print("|");
     for(int i = 0; i < 16; i++){
-      Serial.print(text[i]);
+      if(isPrintable(text[i])){
+        Serial.print(text[i]);
+      }
+      else Serial.print(".");
     }
+    Serial.print("|");
     Serial.println();
     delay(5);      
   }
@@ -260,16 +266,18 @@ void showRTCHexdump(){
     Serial.print("0x");
     Serial.print(adr, HEX);
     Serial.print("\t");
-
+    
     for(int y = 0; y < 16; y++){
-      if((adr+y) == 19) continue;
+      if((adr+y) >= 19) continue;
       int B = i2c_eeprom_read_byte( RTC_I2C_ADDR, adr+y );
       //int i = (adr + 16) % 16;
+      if(y == 8) Serial.print(" ");
       text[y] = B;
       if(B < 16) Serial.print("0");
       Serial.print(B, HEX);
       Serial.print(" "); 
     }
+    
     Serial.println();
     delay(5);      
   }
